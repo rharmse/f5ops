@@ -100,7 +100,7 @@ func listPools(f5 *bigip.BigIP) {
 }
 
 func togglePoolMembers(f5 *bigip.BigIP) {
-	members, err := f5.PoolMembers("/" + "QA" + "/" + "pool_vcoza_reactive_80")
+	members, err := f5.PoolMembers("/" + "{partition}" + "/" + "{poolname}")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -113,7 +113,7 @@ func togglePoolMembers(f5 *bigip.BigIP) {
 		fmt.Printf("%v", member)
 	}
 
-	error := f5.UpdatePoolMembers("/"+"QA"+"/"+"pool_vcoza_reactive_80", &mems)
+	error := f5.UpdatePoolMembers("/"+"{partition}"+"/"+"{poolname}", &mems)
 	if error != nil {
 		fmt.Println(error)
 	}

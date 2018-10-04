@@ -99,6 +99,26 @@ func listPools(f5 *bigip.BigIP) {
 	}
 }
 
+func togglePoolMembers(f5 *bigip.BigIP) {
+	members, err := f5.PoolMembers("/" + "QA" + "/" + "pool_vcoza_reactive_80")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	mems := make([]bigip.PoolMember, len(members.PoolMembers))
+	for memcnt, member := range members.PoolMembers {
+		fmt.Printf("{%d, member_partition:%s, member_name:%s, member_ip:%s, member_state:%s}\n", memcnt, member.Partition, member.Name, member.Address, member.State)
+		member.Session = "user-disabled"
+		mems[memcnt] = member
+		fmt.Printf("%v", member)
+	}
+
+	error := f5.UpdatePoolMembers("/"+"QA"+"/"+"pool_vcoza_reactive_80", &mems)
+	if error != nil {
+		fmt.Println(error)
+	}
+}
+
 func controlLoop(f5 *bigip.BigIP) {
 	fmt.Println("at prompt, type help if needed")
 	var read = ""
@@ -118,6 +138,9 @@ func controlLoop(f5 *bigip.BigIP) {
 			break
 		case "listpools":
 			listPools(f5)
+			break
+		case "toggle":
+			togglePoolMembers(f5)
 			break
 		}
 	}
